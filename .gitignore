@@ -1,0 +1,8 @@
+*.o
+*.txt
+*.xml
+*.zip
+pugixml/
+compiled/
+files/
+
