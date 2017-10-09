@@ -14,28 +14,17 @@ const char* node_types[] =
 
 struct simple_walker: pugi::xml_tree_walker
 {
-    virtual bool for_each(pugi::xml_node& node)
-    {
-        for (int i = 0; i < depth(); ++i) std::cout << "  "; // indentation
-
-        std::cout << node_types[node.type()] << ": name='" << node.name() << "', value='" << node.value() << "'"<<endl;
-
-        return true;
-    }
-};
-
-template <class N>
-void getChild(N &node)
-{
-  N *p = &node;
-  N q  = *p;
-
-  for(pugi::xml_node item = q.child(q.first_child().name()); item; item = item.next_sibling(q.first_child().name()))
+  virtual bool for_each(pugi::xml_node& node)
   {
-    std::cout << "WORKED" << std::endl;
-  }
+    if(node_types[node.type()] == "pcdata") return true;
 
-}
+    for (int i = 0; i < depth()-1; ++i) std::cout << "  "; // indentation
+
+    std::cout << node_types[node.type()] << ": name='" << node.name() << "', value='" << node.child_value() << "'" << endl;
+
+    return true;
+  }
+};
 
 int main()
 {
@@ -74,14 +63,15 @@ int main()
     if (!doc.load_file(name)) return -1;
 
     cout << "Initializing processing of " << name << "..." << endl;
+
     simple_walker walker;
     doc.traverse(walker);
 
-    //pugi::xml_node sicap = doc.child("Sicap");
-    //pugi::xml_node *t = &sicap;
-
-    //getChild<pugi::xml_node>(*t);
-
+    // pugi::xml_node sicap = doc.child("Sicap");
+    // pugi::xml_node *t = &sicap;
+    //
+    // getChild<pugi::xml_node>(*t);
+    //
   }
 
   zip_close(z);
